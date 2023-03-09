@@ -299,3 +299,17 @@ func Test_1(t *testing.T) {
 	}
 	t.Log(reflect.TypeOf(val.Export()))
 }
+
+func Test_2(t *testing.T) {
+	js1 := `function handler() {
+		console.log(new Date())
+		apilib.SleepMill(10000)
+		console.log(new Date())
+		return {};
+	}`
+	val, err := Run(js1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(val)
+}
