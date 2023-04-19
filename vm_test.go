@@ -1,6 +1,8 @@
 package gojs
 
 import (
+	"encoding/json"
+	"github.com/air-iot/errors"
 	"github.com/dop251/goja"
 	"math"
 	"reflect"
@@ -312,4 +314,87 @@ func Test_2(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(val)
+}
+
+func Test_Buffer(t *testing.T) {
+	js1 := `function handler() {
+const buf = Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72]);
+console.log(buf.toString()); // 'buffer'
+		return {};
+	}`
+	val, err := Run(js1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(val)
+}
+
+func Test_xmljs(t *testing.T) {
+	js1 := `function handler() {
+let xml =
+'<?xml version="1.0" encoding="utf-8"?>' +
+'<note importance="high" logged="true">' +
+'    <title>Happy</title>' +
+'    <todo>Work</todo>' +
+'    <todo>Play</todo>' +
+'</note>';
+console.log(xmlJs.xml2json(xml))
+		return {};
+	}`
+	val, err := Run(js1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(val)
+}
+
+func Test_formulajs(t *testing.T) {
+	js1 := `function handler() {
+console.log(formulajs.SUM([1, 2, 3]))
+		return {};
+	}`
+	val, err := Run(js1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(val)
+}
+
+func Test_lodash(t *testing.T) {
+	js1 := `function handler() {
+let result = _.max([1,20])
+console.log(result)
+		return {};
+	}`
+	val, err := Run(js1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(val)
+}
+
+func Test_reduce(t *testing.T) {
+	js1 := `function handler(){
+let arr = [{"name":"temperature","value":26.3},{"name":"humidity","value":65}];
+
+let obj = arr.reduce((acc, cur) => {
+  acc[cur.name] = cur.value;
+  return acc;
+}, {});
+return obj;
+}`
+	val, err := Run(js1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, err := json.Marshal(val)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(b))
+}
+
+func Test_err(t *testing.T) {
+	err := HandlerError
+	t.Log(errors.Is(err, HandlerError))
 }

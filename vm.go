@@ -44,6 +44,8 @@ func initPackages(packagePath string) {
 	programs = append(programs, p)
 }
 
+var HandlerError = errors.New400Response(100040004, "脚本函数handler未找到")
+
 type JSvm struct {
 	lock    sync.Mutex
 	VM      *goja.Runtime
@@ -104,7 +106,7 @@ func GetJsVm(id, script string) (*JSvm, error) {
 		}
 		handler, ok := goja.AssertFunction(vm.Get("handler"))
 		if !ok {
-			return nil, errors.New400Response(100040004, "脚本函数handler未找到")
+			return nil, HandlerError
 		}
 		jsVM = &JSvm{
 			VM:      vm,
@@ -119,7 +121,7 @@ func GetJsVm(id, script string) (*JSvm, error) {
 			}
 			handler, ok := goja.AssertFunction(jsVM.VM.Get("handler"))
 			if !ok {
-				return nil, errors.New400Response(100040004, "脚本函数handler未找到")
+				return nil, HandlerError
 			}
 			jsVM.Script = script
 			jsVM.Handler = handler
