@@ -90,6 +90,7 @@ func GetVm() (*goja.Runtime, error) {
 	_ = vm.Set("formulajs", vm.Get("formulajsformulajs"))
 	_ = vm.Set("iconv", vm.Get("iconvLite"))
 	_ = vm.Set("apilib", apilib)
+	_ = AttachCrc(vm)
 	return vm, nil
 }
 

@@ -398,3 +398,21 @@ func Test_err(t *testing.T) {
 	err := HandlerError
 	t.Log(errors.Is(err, HandlerError))
 }
+
+func Test_Crc(t *testing.T) {
+	js1 := `function handler(){
+	const buf = Buffer.from([0x01, 0x03, 0x00, 0x12, 0x00, 0x10, 0xE4, 0x03]);
+	const got = crc.checksumModbus(buf.slice(0, buf.length-2));
+	const expected = buf.slice(buf.length - 2).readUInt16LE();
+console.log(got, expected)
+return got === expected;
+}`
+	val, err := Run(js1)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !val.Export().(bool) {
+		t.Fatal("crc error, expected: true, got: ", val.Export().(bool))
+	}
+}
