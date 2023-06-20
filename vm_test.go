@@ -416,3 +416,17 @@ return got === expected;
 		t.Fatal("crc error, expected: true, got: ", val.Export().(bool))
 	}
 }
+
+func Test_BCD(t *testing.T) {
+	js1 := `function handler(){
+	return bcd.decode(Buffer.from([35]));
+}`
+	val, err := Run(js1)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if val.Export().(int64) != int64(23) {
+		t.Fatal("bcd decode error, expected: 23, got: ", val.Export().(int64))
+	}
+}
