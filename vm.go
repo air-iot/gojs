@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/air-iot/errors"
 	"github.com/air-iot/gojs/api"
+	log2 "github.com/air-iot/gojs/log"
 	"sync"
 	"time"
 
@@ -18,6 +19,9 @@ var localCache = cache.New(5*time.Minute, 10*time.Minute)
 var registry *require.Registry
 var programs []*goja.Program
 var apilib *api.Lib
+var logLib *log2.Log
+
+type Callback func(vm *goja.Runtime)
 
 func init() {
 	registry = require.NewRegistry()
@@ -31,6 +35,7 @@ func init() {
 	initPackages("packages/formulajs.js")
 	initPackages("packages/iconv-lite.js")
 	apilib = api.NewLib()
+	logLib = log2.NewLogger()
 }
 
 func initPackages(packagePath string) {
@@ -91,7 +96,20 @@ func GetVm() (*goja.Runtime, error) {
 	_ = vm.Set("formulajs", vm.Get("formulajsformulajs"))
 	_ = vm.Set("iconv", vm.Get("iconvLite"))
 	_ = vm.Set("apilib", apilib)
+	_ = vm.Set(log2.Key, logLib)
 	_ = AttachCrc(vm)
+	return vm, nil
+}
+
+func GetVmCallback(cb Callback) (*goja.Runtime, error) {
+	vm, err := GetVm()
+	if err != nil {
+		return nil, err
+	}
+	_ = AttachCrc(vm)
+	if cb != nil {
+		cb(vm)
+	}
 	return vm, nil
 }
 

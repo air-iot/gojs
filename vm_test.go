@@ -3,6 +3,7 @@ package gojs
 import (
 	"encoding/json"
 	"github.com/air-iot/errors"
+	"github.com/air-iot/gojs/log"
 	"github.com/dop251/goja"
 	"math"
 	"reflect"
@@ -433,6 +434,35 @@ func Test_exception(t *testing.T) {
 	val, err := Run(js1)
 	if err != nil {
 		t.Fatal(err)
+	}
+	t.Log(val.Export())
+}
+
+func Test_log(t *testing.T) {
+	js1 := `function handler(i) {
+ logger.Info("a",1)
+}
+`
+	vm, err := GetVmCallback(func(vm *goja.Runtime) {
+		_ = vm.Set(log.Key, log.NewLogger(log.SetModule("测试"), log.SetGroup("分组")))
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if _, err := vm.RunString(js1); err != nil {
+		t.Error(err)
+		return
+	}
+	handler, ok := goja.AssertFunction(vm.Get("handler"))
+	if !ok {
+		t.Error("未找到")
+		return
+	}
+	val, err := handler(goja.Undefined(), vm.ToValue("abc"))
+	if err != nil {
+		t.Error(err)
+		return
 	}
 	t.Log(val.Export())
 }
