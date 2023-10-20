@@ -416,3 +416,23 @@ return got === expected;
 		t.Fatal("crc error, expected: true, got: ", val.Export().(bool))
 	}
 }
+
+func Test_throw(t *testing.T) {
+	js1 := `function handler() {
+  try {
+    let a = JSON.parse('{"a":1}')
+    if (a.a === 1) {
+      throw new Error(1)
+    }
+    return a.a * 2;
+  } catch (err) {
+    return 1
+  }
+}
+`
+	val, err := Run(js1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(val.Export())
+}
