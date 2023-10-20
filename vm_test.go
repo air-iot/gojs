@@ -417,7 +417,7 @@ return got === expected;
 	}
 }
 
-func Test_throw(t *testing.T) {
+func Test_exception(t *testing.T) {
 	js1 := `function handler() {
   try {
     let a = JSON.parse('{"a":1}')

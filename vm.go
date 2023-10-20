@@ -22,6 +22,7 @@ var apilib *api.Lib
 func init() {
 	registry = require.NewRegistry()
 	programs = make([]*goja.Program, 0)
+	initPackages("packages/bcd.js")
 	initPackages("packages/buffer.js")
 	initPackages("packages/lodash.js")
 	initPackages("packages/crypto-js.js")
