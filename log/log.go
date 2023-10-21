@@ -55,33 +55,34 @@ func NewLogger(opts ...Option) *Log {
 }
 
 func (l *Log) Debug(args ...any) {
-	ctx := logger.NewExtraKeyContext(context.Background(), l.o.Key)
-	ctx = logger.NewGroupContext(ctx, l.o.Group)
-	ctx = logger.NewModuleContext(ctx, l.o.Module)
-	ctx = logger.NewProjectContext(ctx, l.o.Project)
-	logger.WithContext(ctx).Debugln(args...)
+	logger.WithContext(l.getCtx()).Debugln(args...)
 }
 
 func (l *Log) Info(args ...any) {
-	ctx := logger.NewExtraKeyContext(context.Background(), l.o.Key)
-	ctx = logger.NewGroupContext(ctx, l.o.Group)
-	ctx = logger.NewModuleContext(ctx, l.o.Module)
-	ctx = logger.NewProjectContext(ctx, l.o.Project)
-	logger.WithContext(ctx).Infoln(args...)
+	logger.WithContext(l.getCtx()).Infoln(args...)
 }
 
 func (l *Log) Warn(args ...any) {
-	ctx := logger.NewExtraKeyContext(context.Background(), l.o.Key)
-	ctx = logger.NewGroupContext(ctx, l.o.Group)
-	ctx = logger.NewModuleContext(ctx, l.o.Module)
-	ctx = logger.NewProjectContext(ctx, l.o.Project)
-	logger.WithContext(ctx).Warnln(args...)
+	logger.WithContext(l.getCtx()).Warnln(args...)
 }
 
 func (l *Log) Error(args ...any) {
-	ctx := logger.NewExtraKeyContext(context.Background(), l.o.Key)
-	ctx = logger.NewGroupContext(ctx, l.o.Group)
-	ctx = logger.NewModuleContext(ctx, l.o.Module)
-	ctx = logger.NewProjectContext(ctx, l.o.Project)
-	logger.WithContext(ctx).Errorln(args...)
+	logger.WithContext(l.getCtx()).Errorln(args...)
+}
+
+func (l *Log) getCtx() context.Context {
+	ctx := context.Background()
+	if l.o.Key != "" {
+		ctx = logger.NewExtraKeyContext(ctx, l.o.Key)
+	}
+	if l.o.Group != "" {
+		ctx = logger.NewGroupContext(ctx, l.o.Group)
+	}
+	if l.o.Module != "" {
+		ctx = logger.NewModuleContext(ctx, l.o.Module)
+	}
+	if l.o.Project != "" {
+		ctx = logger.NewProjectContext(ctx, l.o.Project)
+	}
+	return ctx
 }
