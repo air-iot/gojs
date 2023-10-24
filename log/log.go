@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"github.com/dop251/goja"
 
 	"github.com/air-iot/logger"
 )
@@ -44,6 +45,10 @@ func SetKey(key string) Option {
 	return func(o *options) {
 		o.Key = key
 	}
+}
+
+func SetVM(vm *goja.Runtime, opts ...Option) error {
+	return vm.Set(Key, NewLogger(opts...))
 }
 
 func NewLogger(opts ...Option) *Log {
