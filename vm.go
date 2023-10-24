@@ -21,7 +21,7 @@ var programs []*goja.Program
 var apilib *api.Lib
 var logLib *log2.Log
 
-type Callback func(vm *goja.Runtime)
+type Callback func(vm *goja.Runtime) error
 
 func init() {
 	registry = require.NewRegistry()
@@ -108,7 +108,9 @@ func GetVmCallback(cb Callback) (*goja.Runtime, error) {
 	}
 	_ = AttachCrc(vm)
 	if cb != nil {
-		cb(vm)
+		if err := cb(vm); err != nil {
+			return nil, err
+		}
 	}
 	return vm, nil
 }
