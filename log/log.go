@@ -78,7 +78,7 @@ func (l *Log) Error(args ...any) {
 func (l *Log) getCtx() context.Context {
 	ctx := context.Background()
 	if l.o.Key != "" {
-		ctx = logger.NewExtraKeyContext(ctx, l.o.Key)
+		ctx = logger.NewTableContext(ctx, l.o.Key)
 	}
 	if l.o.Group != "" {
 		ctx = logger.NewGroupContext(ctx, l.o.Group)

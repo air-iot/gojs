@@ -443,8 +443,8 @@ func Test_log(t *testing.T) {
  logger.Info("a",1)
 }
 `
-	vm, err := GetVmCallback(func(vm *goja.Runtime) {
-		_ = vm.Set(log.Key, log.NewLogger(log.SetModule("测试"), log.SetGroup("分组")))
+	vm, err := GetVmCallback(func(vm *goja.Runtime) error {
+		return vm.Set(log.Key, log.NewLogger(log.SetModule("测试"), log.SetGroup("分组")))
 	})
 	if err != nil {
 		t.Error(err)
@@ -465,4 +465,16 @@ func Test_log(t *testing.T) {
 		return
 	}
 	t.Log(val.Export())
+}
+
+func Test_UUID(t *testing.T) {
+	js := `
+function handler() {
+	return uuid.v4();
+}`
+	result, err := Run(js)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+	t.Log(result)
 }
