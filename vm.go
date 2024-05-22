@@ -91,9 +91,22 @@ func GetVm() (*goja.Runtime, error) {
 			return nil, errors.Wrap400Err(err, 100040002)
 		}
 	}
+
+	bufferObj := vm.Get("Buffer").(*goja.Object).Get("Buffer").(*goja.Object)
+	bufferPrototype := bufferObj.Get("prototype").(*goja.Object)
+	_ = bufferPrototype.Set("readBigInt64LE", readBigInt64LE(vm))
+	_ = bufferPrototype.Set("readBigInt64BE", readBigInt64BE(vm))
+	_ = bufferPrototype.Set("writeBigInt64LE", writeBigInt64LE(vm))
+	_ = bufferPrototype.Set("writeBigInt64BE", writeBigInt64BE(vm))
+
+	_ = bufferPrototype.Set("readBigUInt64LE", readBigUInt64LE(vm))
+	_ = bufferPrototype.Set("readBigUInt64BE", readBigUInt64BE(vm))
+	_ = bufferPrototype.Set("writeBigUInt64LE", writeBigUInt64LE(vm))
+	_ = bufferPrototype.Set("writeBigUInt64BE", writeBigUInt64BE(vm))
+
 	_ = vm.Set("_", vm.Get("lodash"))
 	_ = vm.Set("CryptoJS", vm.Get("cryptoJs"))
-	_ = vm.Set("Buffer", vm.Get("Buffer").(*goja.Object).Get("Buffer"))
+	_ = vm.Set("Buffer", bufferObj)
 	_ = vm.Set("formulajs", vm.Get("formulajsformulajs"))
 	_ = vm.Set("iconv", vm.Get("iconvLite"))
 	_ = vm.Set("apilib", apilib)

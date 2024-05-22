@@ -478,3 +478,29 @@ function handler() {
 	}
 	t.Log(result)
 }
+
+func TestBufferInt64(t *testing.T) {
+	js := `function handler() {
+	const buffer = Buffer.alloc(8);
+	buffer.writeBigInt64LE(123456789000, 0);
+	console.log(buffer.readBigInt64LE(0));
+	buffer.writeBigInt64LE(-123456789000, 0);
+	console.log(buffer.readBigInt64LE(0));
+
+	buffer.writeBigInt64BE(123456789000, 0);
+	console.log(buffer.readBigInt64BE(0));
+	buffer.writeBigInt64BE(-123456789000, 0);
+	console.log(buffer.readBigInt64BE(0));
+
+	buffer.writeBigUInt64LE(123456789000, 0);
+	console.log(buffer.readBigUInt64LE(0));
+	buffer.writeBigUInt64BE(123456789000, 0);
+	console.log(buffer.readBigUInt64BE(0));
+}`
+
+	result, err := Run(js)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+	t.Log(result)
+}
