@@ -503,4 +503,94 @@ func TestBufferInt64(t *testing.T) {
 		t.Fatalf("call failed, %+v", err)
 	}
 	t.Log(result)
+
+	js1 := `function handler() {
+	const buffer = Buffer.alloc(8);
+	buffer.writeBigInt64LE(123456789000, 0);
+	return buffer.readBigUInt64LE(0);
+}`
+
+	result, err = Run(js1)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+
+	if result.Export() != int64(123456789000) {
+		t.Fatalf("expected int64(123456789000), got %v", result.Export())
+	}
+
+	js2 := `function handler() {
+	const buffer = Buffer.alloc(8);
+	buffer.writeBigInt64LE(-123456789000, 0);
+	return buffer.readBigInt64LE(0);
+}`
+
+	result, err = Run(js2)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+
+	if result.Export() != int64(-123456789000) {
+		t.Fatalf("expected int64(-123456789000), got %v", result.Export())
+	}
+
+	js3 := `function handler() {
+	const buffer = Buffer.alloc(8);
+	buffer.writeBigInt64BE(123456789000, 0);
+	return buffer.readBigInt64BE(0);
+}`
+
+	result, err = Run(js3)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+
+	if result.Export() != int64(123456789000) {
+		t.Fatalf("expected int64(123456789000), got %v", result.Export())
+	}
+
+	js4 := `function handler() {
+	const buffer = Buffer.alloc(8);
+	buffer.writeBigInt64BE(-123456789000, 0);
+	return buffer.readBigInt64BE(0);
+}`
+
+	result, err = Run(js4)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+
+	if result.Export() != int64(-123456789000) {
+		t.Fatalf("expected int64(-123456789000), got %v", result.Export())
+	}
+
+	js5 := `function handler() {
+	const buffer = Buffer.alloc(8);
+	buffer.writeBigUInt64LE(123456789000, 0);
+	return buffer.readBigUInt64LE(0);
+}`
+
+	result, err = Run(js5)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+
+	if result.Export() != int64(123456789000) {
+		t.Fatalf("expected uint64(123456789000), got %+v, %v", result.ExportType(), result.Export())
+	}
+
+	js6 := `function handler() {
+	const buffer = Buffer.alloc(8);
+	buffer.writeBigUInt64BE(123456789000, 0);
+	return buffer.readBigUInt64BE(0);
+}`
+
+	result, err = Run(js6)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+
+	if result.Export() != int64(123456789000) {
+		t.Fatalf("expected uint64(123456789000), got %+v, %v", result.ExportType(), result.Export())
+	}
 }
