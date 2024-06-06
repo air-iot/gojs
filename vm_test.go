@@ -478,3 +478,33 @@ function handler() {
 	}
 	t.Log(result)
 }
+
+func Test_rsa(t *testing.T) {
+	js := `
+function handler() {
+
+const {publicKey, privateKey} = forge.pki.rsa.generateKeyPair(2048);
+const data = "这是一段需要加密的数据";
+const encryptedData = publicKey.encrypt(data, 'RSA-OAEP', {
+  md: forge.md.sha256.create(),
+  mgf1: {
+    md: forge.md.sha256.create(),
+  },
+});
+
+console.log("加密后的数据（Base64编码）:", forge.util.encode64(encryptedData));
+const decryptedData = privateKey.decrypt(encryptedData, 'RSA-OAEP', {
+  md: forge.md.sha256.create(),
+  mgf1: {
+    md: forge.md.sha256.create(),
+  },
+});
+console.log("解密后的数据:", decryptedData);
+return decryptedData;
+}`
+	result, err := Run(js)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+	t.Log(result)
+}
