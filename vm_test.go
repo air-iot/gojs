@@ -1,11 +1,15 @@
 package gojs
 
 import (
+	"bytes"
+	"compress/gzip"
 	"encoding/json"
+	"fmt"
 	"github.com/air-iot/errors"
 	"github.com/air-iot/gojs/log"
 	"github.com/dop251/goja"
 	"math"
+	"os"
 	"reflect"
 	"strings"
 	"sync"
@@ -592,4 +596,72 @@ func TestBufferInt64(t *testing.T) {
 	if result.Export() != int64(123456789000) {
 		t.Fatalf("expected uint64(123456789000), got %+v, %v", result.ExportType(), result.Export())
 	}
+}
+
+// gzipCompress compresses the given data using gzip.
+func gzipCompress(data []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+	_, err := gz.Write(data)
+	if err != nil {
+		return nil, err
+	}
+	if err := gz.Close(); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func Test_gzip(t *testing.T) {
+	// The data to be compressed
+	data := []byte(`{"a":1}`)
+	t.Log(data)
+	// Compress the data
+	compressedData, err := gzipCompress(data)
+	if err != nil {
+		fmt.Println("Failed to compress data:", err)
+		return
+	}
+
+	// Print out the compressed data
+	fmt.Println("Compressed Data:", compressedData)
+
+	js := `
+function handler(data) {
+	let d = apilib.UnGzip(data)
+	console.log(d.toString());
+	let d1 = JSON.parse(d.toString()) 
+	return d1;
+}`
+	result, err := Run(js, compressedData)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+	t.Log(result.Export())
+}
+
+func Test_zip(t *testing.T) {
+	// The data to be compressed
+	bs, err := os.ReadFile("/Users/zhangqiang/Downloads/fcas-202408201203.zip")
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+
+	js := `
+function handler(data) {
+	let d = apilib.Unzip(data)
+	let arr = []
+	for(let i=0;i<d.length;i++){
+		let obj = d[i]
+		console.log(obj.FileName);
+		let d1 = JSON.parse(obj.Data.toString()) 
+		arr.push(d1);
+	}
+	return arr;
+}`
+	result, err := Run(js, bs)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+	t.Log(result.Export())
 }
