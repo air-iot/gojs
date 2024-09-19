@@ -34,6 +34,7 @@ func init() {
 	initPackages("packages/xml-js.js")
 	initPackages("packages/formulajs.js")
 	initPackages("packages/iconv-lite.js")
+	initPackages("packages/forge.js")
 	//initPackages("packages/uuid.js")
 	apilib = api.NewLib()
 	logLib = log2.NewLogger()
