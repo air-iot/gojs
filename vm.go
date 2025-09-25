@@ -3,11 +3,12 @@ package gojs
 import (
 	"crypto/md5"
 	"fmt"
+	"sync"
+	"time"
+
 	"github.com/air-iot/errors"
 	"github.com/air-iot/gojs/api"
 	log2 "github.com/air-iot/gojs/log"
-	"sync"
-	"time"
 
 	"github.com/dop251/goja"
 	"github.com/dop251/goja_nodejs/console"
@@ -35,6 +36,7 @@ func init() {
 	initPackages("packages/formulajs.js")
 	initPackages("packages/iconv-lite.js")
 	initPackages("packages/forge.js")
+	initPackages("packages/pako.min.js")
 	//initPackages("packages/uuid.js")
 	apilib = api.NewLib()
 	logLib = log2.NewLogger()

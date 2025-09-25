@@ -5,15 +5,16 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
-	"github.com/air-iot/errors"
-	"github.com/air-iot/gojs/log"
-	"github.com/dop251/goja"
 	"math"
 	"os"
 	"reflect"
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/air-iot/errors"
+	"github.com/air-iot/gojs/log"
+	"github.com/dop251/goja"
 )
 
 func TestRun(t *testing.T) {
@@ -660,6 +661,34 @@ function handler(data) {
 	return arr;
 }`
 	result, err := Run(js, bs)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+	t.Log(result.Export())
+}
+
+func Test_a(t *testing.T) {
+	// The data to be compresse
+	js := `
+function handler() {
+	return Date.now();
+}`
+	result, err := Run(js)
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+	t.Log(result.Export())
+}
+
+func Test_a1(t *testing.T) {
+	// The data to be compresse
+
+	js := `
+function handler() {
+    console.log(pako.gzip('Hello, world!'));
+	return (undefined||0) + (undefined||0);
+}`
+	result, err := Run(js)
 	if err != nil {
 		t.Fatalf("call failed, %+v", err)
 	}
