@@ -21,6 +21,7 @@ var registry *require.Registry
 var programs []*goja.Program
 var apilib *api.Lib
 var logLib *log2.Log
+var cipherUtil *CipherUtil
 
 type Callback func(vm *goja.Runtime) error
 
@@ -40,6 +41,7 @@ func init() {
 	//initPackages("packages/uuid.js")
 	apilib = api.NewLib()
 	logLib = log2.NewLogger()
+	cipherUtil = &CipherUtil{}
 }
 
 func initPackages(packagePath string) {
@@ -115,6 +117,7 @@ func GetVm() (*goja.Runtime, error) {
 	_ = vm.Set("apilib", apilib)
 	_ = vm.Set(log2.Key, logLib)
 	_ = AttachCrc(vm)
+	_ = cipherUtil.Attach(vm)
 	return vm, nil
 }
 

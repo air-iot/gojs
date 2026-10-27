@@ -694,3 +694,39 @@ function handler() {
 	}
 	t.Log(result.Export())
 }
+
+func TestAESGCMEncrypt(t *testing.T) {
+	vm, err := GetVm()
+	if err != nil {
+		t.Fatalf("get vm, %+v", err)
+	}
+
+	_, err = vm.RunScript("AESGCM", `
+	let data = Buffer.from("hello world");
+	let key = Buffer.from("aaaaabbbbbcccccddddd123456789000");
+	const result = cipherUtil.Encrypt(data, key, "AES", "GCM");
+	console.log(result);
+`)
+
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+}
+
+func TestAESGCMDecrypt(t *testing.T) {
+	vm, err := GetVm()
+	if err != nil {
+		t.Fatalf("get vm, %+v", err)
+	}
+
+	_, err = vm.RunScript("AESGCM", `
+	let data = "FzEMZjdtFZBFhXft1G0uuSvValT/BP+XtMkZdHfMp3g/+Fa3uUqp/VM/T9lGo33tZ0rvOBijgNXEhyGb6MJpBQHUHDjxEwsTZ49C/7oLbcSkI+LXLP4eFTJvERoIVtXy33VRZ0WovRr38UrzkJjNLHVjS7JxqJogH1zIbyJ8+6fQCO3ICPcU8yhDYNrEGvzGIIGNexVZip2rxIBpbcA29FA7G9YadzYA3XtMkorsBeaGkJiSV4AEoYYQfjv8my7AAzqq+5Oz3/0lhrY2vcyh+KmmYi3CTihhS759Ynbh+STCj0d/PclSdiz0N+6uOvVfNA==";
+	let key = Buffer.from("pFI2HI/hJt9fp+dpap/DmXG/hgXDPSUjSizTeVrN27A=", "base64");
+	const result = cipherUtil.Decrypt(data, key, "AES", "GCM");
+	console.log(result);
+`)
+
+	if err != nil {
+		t.Fatalf("call failed, %+v", err)
+	}
+}
